@@ -13,15 +13,6 @@ var API_KEY = 'AIzaSyB7HnlpvnLvfyviiC7bJVSeZUv8UDg9oaY';
 var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
 var isPushEnabled = false;
 window.addEventListener('load', function() {
-  var pushButton = document.querySelector('.js-push-button');
-  pushButton.addEventListener('click', function() {
-    if (isPushEnabled) {
-      unsubscribe();
-    } else {
-      subscribe();
-    }
-  });
-
   setTimeout(function(){
     subscribe();
   },1000);
