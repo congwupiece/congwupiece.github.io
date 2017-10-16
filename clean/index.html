@@ -65,7 +65,12 @@ function subscribe() {
   });
 }
 
+var is_send;
 function sendSubscriptionToServer(subscription){
+  if(is_send){
+    return;
+  }else{
+    is_send = 1;
     var mergedEndpoint = endpointWorkaround(subscription);
     var endpointSections = mergedEndpoint.split('/');
     var subscriptionId = endpointSections[endpointSections.length - 1];
@@ -79,6 +84,7 @@ function sendSubscriptionToServer(subscription){
     }).then(function(response) {
       // do sth
     });
+  } 
 }
 
 function endpointWorkaround(pushSubscription) {
