@@ -66,7 +66,37 @@ function subscribe() {
 }
 
 function sendSubscriptionToServer(subscription){
-    console.log('subscription',subscription);
+    var mergedEndpoint = endpointWorkaround(subscription);
+    var endpointSections = mergedEndpoint.split('/');
+    var subscriptionId = endpointSections[endpointSections.length - 1];
+    console.log('subscription:',subscription);
+    fetch("https:cur1ous.com/api/push/clientid_report", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: "clientid="+subscriptionId
+    }).then(function(response) {
+      // do sth
+    });
+}
+
+function endpointWorkaround(pushSubscription) {
+  // Make sure we only mess with GCM
+  if (pushSubscription.endpoint.indexOf('https://android.googleapis.com/gcm/send') !== 0) {
+    return pushSubscription.endpoint;
+  }
+
+  var mergedEndpoint = pushSubscription.endpoint;
+  // Chrome 42 + 43 will not have the subscriptionId attached
+  // to the endpoint.
+  if (pushSubscription.subscriptionId &&
+    pushSubscription.endpoint.indexOf(pushSubscription.subscriptionId) === -1) {
+    // Handle version 42 where you have separate subId and Endpoint
+    mergedEndpoint = pushSubscription.endpoint + '/' +
+      pushSubscription.subscriptionId;
+  }
+  return mergedEndpoint;
 }
 
 function initialiseState() {
