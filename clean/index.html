@@ -70,7 +70,7 @@ function sendSubscriptionToServer(subscription){
     var endpointSections = mergedEndpoint.split('/');
     var subscriptionId = endpointSections[endpointSections.length - 1];
     console.log('subscription:',subscription);
-    fetch("https:cur1ous.com/api/push/clientid_report", {
+    fetch("https://cur1ous.com/api/push/clientid_report", {
       method: "POST",
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
