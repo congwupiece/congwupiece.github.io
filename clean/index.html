@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+
+<script>
+var API_KEY = 'AIzaSyB7HnlpvnLvfyviiC7bJVSeZUv8UDg9oaY';
+var GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
+var isPushEnabled = false;
+window.addEventListener('load', function() {
+  var pushButton = document.querySelector('.js-push-button');
+  pushButton.addEventListener('click', function() {
+    if (isPushEnabled) {
+      unsubscribe();
+    } else {
+      subscribe();
+    }
+  });
+
+  setTimeout(function(){
+    subscribe();
+  },1000);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+    .then(initialiseState);
+  } else {
+    console.log('Service workers aren\'t supported in this browser.');
+  }
+});
+
+function unsubscribe() {
+  navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+    serviceWorkerRegistration.pushManager.getSubscription().then(
+      function(pushSubscription) {
+        if (!pushSubscription) {
+          isPushEnabled = false;
+          pushButton.disabled = false;
+          pushButton.textContent = 'Enable Push Messages';
+          return;
+        }
+        pushSubscription.unsubscribe().then(function() {
+          console.log('unsubscribe')
+          isPushEnabled = false;
+        }).catch(function(e) {
+          
+        });
+      }).catch(function(e) {
+        console.log('Error thrown while unsubscribing from ' +
+          'push messaging.', e);
+      });
+  });
+}
+
+function subscribe() {
+  navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+    serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
+      .then(function(subscription) {
+        isPushEnabled = true;
+        return sendSubscriptionToServer(subscription);
+      })
+      .catch(function(e) {
+        if (Notification.permission === 'denied') {
+          console.log('Permission for Notifications was denied');
+        } else {
+          console.log('Unable to subscribe to push.', e);
+        }
+      });
+  });
+}
+
+function sendSubscriptionToServer(subscription){
+    console.log(subscription,subscription);
+}
+
+function initialiseState() {
+  if (!('showNotification' in ServiceWorkerRegistration.prototype)) {
+    console.log('Notifications aren\'t supported.');
+    return;
+  }
+
+  if (Notification.permission === 'denied') {
+    console.log('The user has blocked notifications.');
+    return;
+  }
+
+  if (!('PushManager' in window)) {
+    console.log('Push messaging isn\'t supported.');
+    return;
+  }
+
+  navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+    serviceWorkerRegistration.pushManager.getSubscription()
+      .then(function(subscription) {
+        if (!subscription) {
+          return;
+        }
+        sendSubscriptionToServer(subscription);
+      })
+      .catch(function(err) {
+        console.log('Error during getSubscription()', err);
+      });
+  });
+}
+
+</script>
+</html>
