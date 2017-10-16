@@ -9,13 +9,13 @@ self.addEventListener('push', function(event) {
   var icon = 'https://cur1ous.com/webimg/30318cea775f71da67939ce6c217435b';
   var tag = 'simple-push-demo-notification-tag';
 
-  event.waitUntil(
+  // event.waitUntil(
     self.registration.showNotification(title, {
       body: body,
       icon: icon,
       tag: tag
     })
-  );
+  // );
 });
 
 self.addEventListener('notificationclick', function(event) {
