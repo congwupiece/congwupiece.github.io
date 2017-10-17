@@ -1,5 +1,8 @@
 'use strict';
 
+
+
+var new_url = '/';
 self.addEventListener('push', function(event) {
   console.log('Received a push message', event);
 
@@ -9,8 +12,6 @@ self.addEventListener('push', function(event) {
   var icon = '';
   var tag = 'simple-push-demo-notification-tag';
 
-
-  var new_url = '/';
   self.registration.pushManager.getSubscription().then(function(subscription) {
       var mergedEndpoint = endpointWorkaround(subscription);
       var endpointSections = mergedEndpoint.split('/');
@@ -22,9 +23,9 @@ self.addEventListener('push', function(event) {
       .then(function(r) {
         var data = r.data[0];
         self.registration.showNotification(data.text, {
-          body: data.href
+          body: data.url
         });
-        new_url = data.href;
+        new_url = data.url;
       })
       .catch(function(err) {
         console.log('err');
