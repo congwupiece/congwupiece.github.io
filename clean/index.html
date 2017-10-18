@@ -6,7 +6,9 @@
      <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    
+    <button class="js-push-button" onclick="unsubscribe()">
+      disable
+    </button>
 </body>
 
 <script>
@@ -30,14 +32,10 @@ function unsubscribe() {
     serviceWorkerRegistration.pushManager.getSubscription().then(
       function(pushSubscription) {
         if (!pushSubscription) {
-          isPushEnabled = false;
-          pushButton.disabled = false;
-          pushButton.textContent = 'Enable Push Messages';
           return;
         }
         pushSubscription.unsubscribe().then(function() {
           console.log('unsubscribe')
-          isPushEnabled = false;
         }).catch(function(e) {
           
         });
